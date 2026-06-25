@@ -1,0 +1,482 @@
+{
+  "name": "HW13 HTTP Request  NBU_ДОРОБИ для gtih",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "About API of the National Bank of Ukraine (NBU)\nhttps://bank.gov.ua/ua/open-data/api-dev\n\nExample: https://bank.gov.ua/NBU_Exchange/exchange_site?start=20220115&end=20220131&sort=exchangedate&order=asc&json\nSet  *start  date - 20260101*  and  *end date  - now*\n\n",
+        "height": 112,
+        "width": 992
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1616,
+        -1120
+      ],
+      "typeVersion": 1,
+      "id": "ca80a802-b7fe-4026-8474-25e14806dd87",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "url": "https://bank.gov.ua/NBU_Exchange/exchange_site",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "start",
+              "value": "20260101"
+            },
+            {
+              "name": "end",
+              "value": "={{ $now.toFormat('yyyyMMdd') }}"
+            },
+            {
+              "name": "sort",
+              "value": "exchangedate"
+            },
+            {
+              "name": "order",
+              "value": "asc"
+            },
+            {
+              "name": "json"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": []
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -1392,
+        -928
+      ],
+      "id": "c9ecf88e-cf6f-4f2b-aad1-d777034e5ba0",
+      "name": "HTTP Request",
+      "notesInFlow": true,
+      "notes": "Fetch NBU Exchange Rates"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "d8085a5d-e1f1-45f5-8194-15eccd13677a",
+              "leftValue": "={{ ['USD', 'EUR'].includes($json.cc) }}",
+              "rightValue": " USD, EUR, GBP",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        -1168,
+        -928
+      ],
+      "id": "996b051b-d4c0-4d7d-be04-a0e8852a6714",
+      "name": "Filter",
+      "notesInFlow": true,
+      "notes": "Filter USD and EUR"
+    },
+    {
+      "parameters": {
+        "jsCode": "const result = {};\n\nfor (const item of items) {\n  const currency = item.json.currency_short; // USD, EUR, GBP\n  const currencyName = item.json.currency;   // US Dollar\n  const rate = Number(item.json.rate);\n  const date = item.json.exchange_date;\n\n  if (!result[currency]) {\n    result[currency] = {\n      currency: currencyName,\n      currency_short: currency,\n\n      min_rate: rate,\n      min_date: date,\n\n      max_rate: rate,\n      max_date: date,\n\n      current_rate: rate,\n      current_date: date,\n    };\n  }\n\n  // Min rate\n  if (rate < result[currency].min_rate) {\n    result[currency].min_rate = rate;\n    result[currency].min_date = date;\n  }\n\n  // Max rate\n  if (rate > result[currency].max_rate) {\n    result[currency].max_rate = rate;\n    result[currency].max_date = date;\n  }\n\n  // Current rate\n  if (\n    new Date(date.split('.').reverse().join('-')) >\n    new Date(result[currency].current_date.split('.').reverse().join('-'))\n  ) {\n    result[currency].current_rate = rate;\n    result[currency].current_date = date;\n  }\n}\n\nreturn [\n  {\n    json: {\n      currencies: Object.values(result)\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1568,
+        -624
+      ],
+      "id": "f59b4076-8554-4e77-b89b-4cdb240faf06",
+      "name": "Code in JavaScript",
+      "notesInFlow": true,
+      "notes": "Calc.Min / Max / Current Rates"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a financial analyst .\nAnalyze the exchange rate statistics provided below and generate short summary in email.\nPeriod of exchange rate analysis (Start - End period ).\nFor each currency:\n- State the current exchange rate.\n- Minimum exchange rate and the date when it occurred.\n- Maximum exchange rate and the date when it occurred.\n\nData:\n{{ JSON.stringify($json.currencies) }}\n\nReturn only the email body.\nDo not add greetings, signatures, placeholders, or closing remarks.\nDo not use *, **, #, or bullet markdown syntax.\nReturn plain text only.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -1344,
+        -624
+      ],
+      "id": "618ee560-a637-4df4-b20c-f927d370c580",
+      "name": "AI Agent",
+      "executeOnce": false,
+      "notesInFlow": true,
+      "notes": "Generate OpenAI Summary"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -1344,
+        -432
+      ],
+      "id": "abf0df02-5fbf-4a3c-bb0c-560b9e54359c",
+      "name": "OpenAI Chat Model",
+      "notesInFlow": true,
+      "notes": "gpi-4o-mini"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                1
+              ],
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -1616,
+        -928
+      ],
+      "id": "a0648db6-8ddb-461b-8e38-360a360c05d6",
+      "name": "Schedule Trigger",
+      "notesInFlow": true,
+      "notes": "Weekly Schedule"
+    },
+    {
+      "parameters": {
+        "sendTo": "your-email@example.com",
+        "subject": "Exchange Rate Summary",
+        "emailType": "text",
+        "message": "={{ $json.output }}",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "Exchange Rate Reporting System"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -768,
+        -624
+      ],
+      "id": "7b708f06-f7e9-4c6b-9b25-6c1eca91bfc0",
+      "name": "Send a message",
+      "executeOnce": false,
+      "notesInFlow": true,
+      "notes": "Send Email Report"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5fe3fe94-c082-4613-a7b2-104d1495ee31",
+              "name": "id ",
+              "value": "={{ $json.cc + '_' + $json.exchangedate }}",
+              "type": "string"
+            },
+            {
+              "id": "88890cb0-624d-4dcd-801b-8847de13b901",
+              "name": "exchangedate_sort",
+              "value": "={{ DateTime.fromFormat($json.exchangedate, 'dd.MM.yyyy').toISODate() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -944,
+        -928
+      ],
+      "id": "476df3cb-acda-463d-b2f0-1d908a389c1d",
+      "name": "Edit Fields",
+      "notesInFlow": true,
+      "notes": "Generate id(s) \nNormalize Dates "
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "Exchage_rate_History"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "exchange_date": "={{ $json.exchangedate }}",
+            "currency": "={{ $json.enname }}",
+            "currency_short": "={{ $json.cc }}",
+            "rate": "={{ $json.rate }}",
+            "Id": "={{ $json['id '] }}"
+          },
+          "matchingColumns": [
+            "Id"
+          ],
+          "schema": [
+            {
+              "id": "Id",
+              "displayName": "Id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "exchange_date",
+              "displayName": "exchange_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "currency",
+              "displayName": "currency",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "currency_short",
+              "displayName": "currency_short",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "rate",
+              "displayName": "rate",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -720,
+        -928
+      ],
+      "id": "67180828-9db1-423f-a6db-30cb2e6099c4",
+      "name": "Append or update row in sheet",
+      "executeOnce": false,
+      "retryOnFail": false,
+      "alwaysOutputData": true,
+      "notesInFlow": true,
+      "notes": "Store / Update History"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "484dbb45-d69e-43e2-8d7d-f3e2994ce979",
+              "name": "output",
+              "value": "={{ $json.output }}\n\nDetailed historical data:\nYOUR_GOOGLE_SHEET_URL\n\nBest regards,\nAutomated Exchange Rate Reporting System",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -992,
+        -624
+      ],
+      "id": "2a439019-a4b2-47c6-8795-1e778f501e67",
+      "name": "Edit Fields1",
+      "notesInFlow": true,
+      "notes": "Add Email Footer"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "5fd51183-c4f3-4876-9242-69a19a7b76e9",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "id": "AOfCcXmcxMhF89TL",
+  "tags": []
+}

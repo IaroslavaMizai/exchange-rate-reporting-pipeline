@@ -263,6 +263,8 @@ Append static content, report links, and footer information.
 
 Send the final report automatically via Gmail.
 
+![Email Example](Images/email_example.png)
+
 ---
 
 ## Repository Structure

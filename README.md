@@ -6,25 +6,6 @@ This project retrieves historical exchange rate data from the National Bank of U
 
 ---
 
-## Table of Contents
-
-- [Overview](#overview)
-- [Features](#features)
-- [Workflow](#workflow)
-- [Workflow Architecture](#workflow-architecture)
-- [Technologies](#technologies)
-- [Prerequisites](#prerequisites)
-- [Setup Instructions](#setup-instructions)
-- [Data Source](#data-source)
-- [Historical Data Storage](#historical-data-storage)
-- [Workflow Steps](#workflow-steps)
-- [Repository Structure](#repository-structure)
-- [Security Notes](#security-notes)
-- [Skills Demonstrated](#skills-demonstrated)
-- [Project Outcomes](#project-outcomes)
-
----
-
 ## Overview
 
 The workflow automates the complete exchange rate reporting process.
@@ -53,7 +34,7 @@ For each monitored currency, the workflow calculates:
 - JavaScript analytics
 - OpenAI-powered summaries
 - Automated email notifications
-- Workflow automation with n8n
+- End-to-end workflow automation
 
 ---
 
@@ -130,32 +111,49 @@ Create a spreadsheet for storing exchange rate history.
 Suggested structure:
 
 | id | exchange_date | currency | currency_short | rate |
-|------|------|------|------|------|
+|----|----|----|----|----|
+
+---
 
 ### 2. Configure Google Sheets Credentials
 
 Create a Google Sheets OAuth2 credential in n8n and connect it to your spreadsheet.
 
+---
+
 ### 3. Configure Gmail Credentials
 
 Create a Gmail OAuth2 credential in n8n.
+
+---
 
 ### 4. Configure OpenAI Credentials
 
 Create an OpenAI credential and connect it to the OpenAI node.
 
+---
+
 ### 5. Import the Workflow
 
 Import the workflow JSON file into n8n.
 
+---
+
 ### 6. Update Configuration
 
-Review and update:
+Replace the following placeholders:
 
-- Spreadsheet selection
-- Email recipients
-- Credentials
-- Schedule settings
+- `YOUR_GOOGLE_SHEET_ID`
+- `YOUR_GOOGLE_SHEET_URL`
+- `your-email@example.com`
+
+Select your own:
+
+- Google Sheets credentials
+- Gmail credentials
+- OpenAI credentials
+
+---
 
 ### 7. Test the Workflow
 
@@ -168,22 +166,26 @@ Verify that:
 - OpenAI summary is generated
 - Email delivery succeeds
 
+---
+
 ### 8. Activate the Workflow
 
 Enable the workflow and configure the desired schedule.
 
 Example:
 
-```text
-Every Monday
-08:00 AM
-```
+- Every Monday
+- 08:00 AM
 
 ---
 
 ## Data Source
 
 Exchange rate data is retrieved from the National Bank of Ukraine Open Data API.
+
+Official documentation:
+
+https://bank.gov.ua/ua/open-data/api-dev
 
 Currencies currently monitored:
 
@@ -194,9 +196,7 @@ Currencies currently monitored:
 
 ## Historical Data Storage
 
-Exchange rate history is stored in a Google Sheet named:
-
-**Exchange_Rate_History**
+Historical exchange rate data is stored in Google Sheets.
 
 ### Data Model
 
@@ -208,7 +208,7 @@ Exchange rate history is stored in a Google Sheet named:
 | currency_short | String |
 | rate | Number |
 
-### Unique Identifier
+### Unique Identifier Examples
 
 ```text
 USD_24.06.2026
@@ -238,7 +238,7 @@ Generate unique IDs and normalize date values.
 
 ### 4. Historical Data Storage
 
-Store records using the Append or Update strategy.
+Store records using the Append-or-Update strategy.
 
 ### 5. Statistical Analysis
 
@@ -257,11 +257,15 @@ Generate a concise business-style exchange rate report using OpenAI GPT-4o-mini.
 
 ### 7. Email Formatting
 
-Append static content, report links, and footer information.
+Append static content and report metadata.
 
 ### 8. Email Delivery
 
 Send the final report automatically via Gmail.
+
+---
+
+## Email Example
 
 ![Email Example](Images/email_example.png)
 
@@ -293,7 +297,9 @@ The workflow does not contain:
 - Gmail credentials
 - Google account information
 - Spreadsheet IDs
+- Spreadsheet URLs
 - Email addresses
+- n8n instance identifiers
 
 To reproduce this project, create your own credentials and storage resources.
 
@@ -310,9 +316,12 @@ To reproduce this project, create your own credentials and storage resources.
 - JavaScript Data Processing
 - Google Sheets Automation
 - OpenAI Integration
+- AI-Augmented Reporting
 - Automated Reporting
 - ETL Pipeline Design
+- Workflow Orchestration
 
+---
 
 ## Project Outcomes
 
@@ -322,12 +331,12 @@ The solution integrates external API data, maintains historical records, perform
 
 By combining workflow automation, data processing, cloud storage, AI-powered reporting, and scheduled email delivery, the project showcases a practical end-to-end automation solution applicable to financial monitoring and business reporting scenarios.
 
-Key capabilities demonstrated include:
+### Key Capabilities Demonstrated
 
-Building production-style n8n workflows
-Integrating third-party APIs
-Managing historical datasets
-Implementing deduplication strategies
-Processing data with JavaScript
-Using AI for business reporting
-Automating recurring reporting tasks
+- Building production-style n8n workflows
+- Integrating third-party APIs
+- Managing historical datasets
+- Implementing deduplication strategies
+- Processing data with JavaScript
+- Using AI for business reporting
+- Automating recurring reporting tasks

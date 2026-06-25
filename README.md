@@ -6,6 +6,26 @@ This project retrieves historical exchange rate data from the National Bank of U
 
 ---
 
+## Table of Contents
+
+- [Overview](#overview)
+- [Quick Start](#quick-start)
+- [Features](#features)
+- [Workflow](#workflow)
+- [Workflow Architecture](#workflow-architecture)
+- [Technologies](#technologies)
+- [Prerequisites](#prerequisites)
+- [Setup Instructions](#setup-instructions)
+- [Data Source](#data-source)
+- [Historical Data Storage](#historical-data-storage)
+- [Workflow Steps](#workflow-steps)
+- [Repository Structure](#repository-structure)
+- [Security Notes](#security-notes)
+- [Skills Demonstrated](#skills-demonstrated)
+- [Project Outcomes](#project-outcomes)
+
+---
+
 ## Overview
 
 The workflow automates the complete exchange rate reporting process.
@@ -22,6 +42,28 @@ For each monitored currency, the workflow calculates:
 
 ---
 
+## Quick Start
+
+1. Download the workflow JSON file:
+
+   [exchange_rate_reporting.json](workflow/exchange_rate_reporting.json)
+
+2. Import the workflow into n8n.
+
+3. Configure:
+   - OpenAI credentials
+   - Google Sheets credentials
+   - Gmail credentials
+
+4. Replace the placeholder values:
+   - YOUR_GOOGLE_SHEET_ID
+   - YOUR_GOOGLE_SHEET_URL
+   - your-email@example.com
+
+5. Activate the workflow.
+
+---
+
 ## Features
 
 - Scheduled workflow execution
@@ -34,7 +76,7 @@ For each monitored currency, the workflow calculates:
 - JavaScript analytics
 - OpenAI-powered summaries
 - Automated email notifications
-- End-to-end workflow automation
+- Workflow automation with n8n
 
 ---
 
@@ -111,49 +153,40 @@ Create a spreadsheet for storing exchange rate history.
 Suggested structure:
 
 | id | exchange_date | currency | currency_short | rate |
-|----|----|----|----|----|
-
----
+|------|------|------|------|------|
 
 ### 2. Configure Google Sheets Credentials
 
 Create a Google Sheets OAuth2 credential in n8n and connect it to your spreadsheet.
 
----
-
 ### 3. Configure Gmail Credentials
 
 Create a Gmail OAuth2 credential in n8n.
-
----
 
 ### 4. Configure OpenAI Credentials
 
 Create an OpenAI credential and connect it to the OpenAI node.
 
----
-
 ### 5. Import the Workflow
 
-Import the workflow JSON file into n8n.
+Download the workflow JSON file:
 
----
+[exchange_rate_reporting.json](workflow/exchange_rate_reporting.json)
+
+Import the workflow into your n8n instance using:
+
+```text
+Settings → Import from File
+```
 
 ### 6. Update Configuration
 
-Replace the following placeholders:
+Review and update:
 
-- `YOUR_GOOGLE_SHEET_ID`
-- `YOUR_GOOGLE_SHEET_URL`
-- `your-email@example.com`
-
-Select your own:
-
-- Google Sheets credentials
-- Gmail credentials
-- OpenAI credentials
-
----
+- Spreadsheet selection
+- Email recipients
+- Credentials
+- Schedule settings
 
 ### 7. Test the Workflow
 
@@ -166,16 +199,16 @@ Verify that:
 - OpenAI summary is generated
 - Email delivery succeeds
 
----
-
 ### 8. Activate the Workflow
 
 Enable the workflow and configure the desired schedule.
 
 Example:
 
-- Every Monday
-- 08:00 AM
+```text
+Every Monday
+08:00 AM
+```
 
 ---
 
@@ -183,7 +216,7 @@ Example:
 
 Exchange rate data is retrieved from the National Bank of Ukraine Open Data API.
 
-Official documentation:
+Official API documentation:
 
 https://bank.gov.ua/ua/open-data/api-dev
 
@@ -196,7 +229,9 @@ Currencies currently monitored:
 
 ## Historical Data Storage
 
-Historical exchange rate data is stored in Google Sheets.
+Exchange rate history is stored in a Google Sheet named:
+
+**Exchange_Rate_History**
 
 ### Data Model
 
@@ -208,7 +243,7 @@ Historical exchange rate data is stored in Google Sheets.
 | currency_short | String |
 | rate | Number |
 
-### Unique Identifier Examples
+### Unique Identifier
 
 ```text
 USD_24.06.2026
@@ -238,7 +273,7 @@ Generate unique IDs and normalize date values.
 
 ### 4. Historical Data Storage
 
-Store records using the Append-or-Update strategy.
+Store records using the Append or Update strategy.
 
 ### 5. Statistical Analysis
 
@@ -257,15 +292,11 @@ Generate a concise business-style exchange rate report using OpenAI GPT-4o-mini.
 
 ### 7. Email Formatting
 
-Append static content and report metadata.
+Append static content, report links, and footer information.
 
 ### 8. Email Delivery
 
 Send the final report automatically via Gmail.
-
----
-
-## Email Example
 
 ![Email Example](Images/email_example.png)
 
@@ -300,6 +331,7 @@ The workflow does not contain:
 - Spreadsheet URLs
 - Email addresses
 - n8n instance identifiers
+- Webhook identifiers
 
 To reproduce this project, create your own credentials and storage resources.
 
@@ -316,10 +348,8 @@ To reproduce this project, create your own credentials and storage resources.
 - JavaScript Data Processing
 - Google Sheets Automation
 - OpenAI Integration
-- AI-Augmented Reporting
 - Automated Reporting
 - ETL Pipeline Design
-- Workflow Orchestration
 
 ---
 

@@ -21,7 +21,6 @@ This project retrieves historical exchange rate data from the National Bank of U
 - [Repository Structure](#repository-structure)
 - [Security Notes](#security-notes)
 - [Skills Demonstrated](#skills-demonstrated)
-- [Future Improvements](#future-improvements)
 - [Project Outcomes](project-outcomes)
 
 ---

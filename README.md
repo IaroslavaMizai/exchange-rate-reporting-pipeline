@@ -79,9 +79,6 @@ Edit Fields
 (Generate Record ID + Normalize Date)
       │
       ▼
-Sort Historical Records
-      │
-      ▼
 Google Sheets
 (Append or Update)
       │

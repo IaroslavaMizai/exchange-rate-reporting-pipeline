@@ -48,7 +48,6 @@ For each monitored currency, the workflow calculates:
 - Historical exchange rate tracking
 - Google Sheets storage
 - Date normalization
-- Historical record sorting
 - Duplicate prevention
 - Append-or-update storage strategy
 - JavaScript analytics
@@ -240,17 +239,11 @@ Keep only target currencies:
 
 Generate unique IDs and normalize date values.
 
-### 4. Historical Record Sorting
-
-Records are sorted chronologically before storage.
-
-Sorting is not required for duplicate prevention, since updates rely on the unique ID field. However, sorting keeps the spreadsheet organized and easier to review manually.
-
-### 5. Historical Data Storage
+### 4. Historical Data Storage
 
 Store records using the Append or Update strategy.
 
-### 6. Statistical Analysis
+### 5. Statistical Analysis
 
 Calculate:
 
@@ -261,15 +254,15 @@ Calculate:
 - Maximum exchange rate
 - Date of maximum exchange rate
 
-### 7. OpenAI Summary Generation
+### 6. OpenAI Summary Generation
 
 Generate a concise business-style exchange rate report using OpenAI GPT-4o-mini.
 
-### 8. Email Formatting
+### 7. Email Formatting
 
 Append static content, report links, and footer information.
 
-### 9. Email Delivery
+### 8. Email Delivery
 
 Send the final report automatically via Gmail.
 
@@ -314,7 +307,6 @@ To reproduce this project, create your own credentials and storage resources.
 - Data Collection
 - Historical Data Management
 - Data Transformation
-- Data Normalization
 - Data Deduplication
 - JavaScript Data Processing
 - Google Sheets Automation

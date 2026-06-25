@@ -127,7 +127,7 @@ Before running the workflow, prepare:
 
 ## Setup Instructions
 
-### 1. Create a Google Sheet
+1. Create a Google Sheet
 
 Create a spreadsheet for storing exchange rate history.
 
@@ -136,23 +136,23 @@ Suggested structure:
 | id | exchange_date | currency | currency_short | rate |
 |------|------|------|------|------|
 
-### 2. Configure Google Sheets Credentials
+2. Configure Google Sheets Credentials
 
 Create a Google Sheets OAuth2 credential in n8n and connect it to your spreadsheet.
 
-### 3. Configure Gmail Credentials
+3. Configure Gmail Credentials
 
 Create a Gmail OAuth2 credential in n8n.
 
-### 4. Configure OpenAI Credentials
+4. Configure OpenAI Credentials
 
 Create an OpenAI credential and connect it to the OpenAI node.
 
-### 5. Import the Workflow
+5. Import the Workflow
 
 Import the workflow JSON file into n8n.
 
-### 6. Update Configuration
+6. Update Configuration
 
 Review and update:
 
@@ -161,7 +161,7 @@ Review and update:
 - Credentials
 - Schedule settings
 
-### 7. Test the Workflow
+7. Test the Workflow
 
 Verify that:
 
@@ -172,7 +172,7 @@ Verify that:
 - OpenAI summary is generated
 - Email delivery succeeds
 
-### 8. Activate the Workflow
+8. Activate the Workflow
 
 Enable the workflow and configure the desired schedule.
 
